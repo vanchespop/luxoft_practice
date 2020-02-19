@@ -7,10 +7,7 @@ Vue.use(VueRouter);
 const routes = [
   {
     path: '/',
-    beforeEnter: (to, from, next) => {
-      router.push('/temperature')
-      next()
-    }
+    redirect: '/temperature'
   },
   {
     path: '/temperature',

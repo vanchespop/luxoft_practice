@@ -14,7 +14,7 @@
                 show-arrows
                 dark
         >
-          <v-tab to="/">Температура</v-tab>
+          <v-tab to="/temperature">Температура</v-tab>
           <v-tab to="/humidity">Влажность</v-tab>
           <v-tab to="/speed">Скорость Ветра</v-tab>
         </v-tabs>

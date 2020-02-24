@@ -20,10 +20,22 @@
         </v-tabs>
         <router-view :key="$route.fullPath"></router-view>
         <v-data-table
+                v-model="value"
                 :headers="headers"
                 :items="desserts"
+                item-key="date"
                 :sort-by="['date']"
-        ></v-data-table>
+                :page.sync="page"
+                single-select
+        >
+          <template v-slot:item="{ item, isSelected, select }">
+            <tr :class='{"blue accent-4 white--text": isSelected}' @click="toggle(isSelected, select, item.date)">
+              <td :key='index' v-for="(value, index) in item">
+                {{value}}
+              </td>
+            </tr>
+          </template>
+        </v-data-table>
       </v-col>
     </v-row>
   </v-container>
@@ -33,19 +45,37 @@
   import data from "../stabs/items";
   export default {
     name: 'MainComponent',
+    beforeMount() {
+      const hashDate = this.$router.history.current.hash.slice(1);
+      const page = this.desserts.findIndex(e => e.date === hashDate);
+
+      if (~page) {
+        this.page = Math.floor(page / 10 + 1);
+      }
+      this.value = this.desserts.filter(e => e.date === hashDate);
+    },
     data: () => ({
+      page: 1,
+      value: [],
       tab: null,
       headers: [
         {
           text: 'Дата',
           align: 'left',
-          value: 'date',
+          value: 'date'
         },
         { text: 'Температура', value: 'temperature' },
-        { text: 'Влажность', value: 'humidity' },
-        { text: 'Скорость ветра', value: 'speed' },
+        { text: 'Влажность', value: 'humidity'},
+        { text: 'Скорость ветра', value: 'speed'},
       ],
-      desserts: data
+      desserts: data,
     }),
+    methods: {
+      toggle(isSelected, select, date) {
+        history.replaceState(null, null, '#' + date);
+        select(!isSelected)
+      }
+    }
   }
 </script>
+<style scoped></style>

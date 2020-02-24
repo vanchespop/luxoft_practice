@@ -20,18 +20,26 @@
         </v-tabs>
         <router-view :key="$route.fullPath"></router-view>
         <v-data-table
-                v-model="value"
+                v-model="selectedRows"
                 :headers="headers"
-                :items="desserts"
+                :items="globalData"
                 item-key="date"
                 :sort-by="['date']"
                 :page.sync="page"
                 single-select
         >
-          <template v-slot:item="{ item, isSelected, select }">
-            <tr :class='{"blue accent-4 white--text": isSelected}' @click="toggle(isSelected, select, item.date)">
-              <td :key='index' v-for="(value, index) in item">
-                {{value}}
+          <template v-slot:item="{ item, isSelected, select, headers }">
+            <tr
+                    :class='{"blue accent-4 white--text": isSelected}'
+                    @click="toggle(isSelected, select, item.date)"
+            >
+              <td
+                      class="d-flex align-center justify-space-between d-sm-table-cell sm-border"
+                      :key='index'
+                      v-for="(element, index) in headers"
+              >
+                <span class="font-weight-bold hidden-sm-and-up">{{element.text}}</span>
+                <span class="d-block">{{item[element.value]}}</span>
               </td>
             </tr>
           </template>
@@ -47,16 +55,16 @@
     name: 'MainComponent',
     beforeMount() {
       const hashDate = this.$router.history.current.hash.slice(1);
-      const page = this.desserts.findIndex(e => e.date === hashDate);
+      const page = this.globalData.findIndex(e => e.date === hashDate);
 
       if (~page) {
         this.page = Math.floor(page / 10 + 1);
       }
-      this.value = this.desserts.filter(e => e.date === hashDate);
+      this.selectedRows = this.globalData.filter(e => e.date === hashDate);
     },
     data: () => ({
       page: 1,
-      value: [],
+      selectedRows: [],
       tab: null,
       headers: [
         {
@@ -68,7 +76,7 @@
         { text: 'Влажность', value: 'humidity'},
         { text: 'Скорость ветра', value: 'speed'},
       ],
-      desserts: data,
+      globalData: data,
     }),
     methods: {
       toggle(isSelected, select, date) {
@@ -78,4 +86,10 @@
     }
   }
 </script>
-<style scoped></style>
+<style scoped>
+  @media (max-width: 600px) {
+    .sm-border:not(:last-child) {
+      border-bottom: none !important;
+    }
+  }
+</style>

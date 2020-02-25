@@ -80,7 +80,11 @@
     }),
     methods: {
       toggle(isSelected, select, date) {
-        history.replaceState(null, null, '#' + date);
+        if (!isSelected) {
+          history.replaceState("", document.title, '#' + date);
+        } else {
+          history.replaceState("", document.title, ' ');
+        }
         select(!isSelected)
       }
     }

@@ -14,9 +14,9 @@
                 show-arrows
                 dark
         >
-          <v-tab to="/temperature">Температура</v-tab>
-          <v-tab to="/humidity">Влажность</v-tab>
-          <v-tab to="/speed">Скорость Ветра</v-tab>
+          <v-tab :to="'/temperature'+selectedRow">Температура</v-tab>
+          <v-tab :to="'/humidity'+selectedRow">Влажность</v-tab>
+          <v-tab :to="'/speed'+selectedRow">Скорость Ветра</v-tab>
         </v-tabs>
         <router-view :key="$route.fullPath"></router-view>
         <v-data-table
@@ -56,7 +56,7 @@
     beforeMount() {
       const hashDate = this.$router.history.current.hash.slice(1);
       const page = this.globalData.findIndex(e => e.date === hashDate);
-
+      this.selectedRow = '#' +hashDate;
       if (~page) {
         this.page = Math.floor(page / 10 + 1);
       }
@@ -65,6 +65,7 @@
     data: () => ({
       page: 1,
       selectedRows: [],
+      selectedRow: '',
       tab: null,
       headers: [
         {
@@ -82,8 +83,10 @@
       toggle(isSelected, select, date) {
         if (!isSelected) {
           history.replaceState("", document.title, '#' + date);
+          this.selectedRow = '#' + date;
         } else {
           history.replaceState("", document.title, ' ');
+          this.selectedRow = '';
         }
         select(!isSelected)
       }

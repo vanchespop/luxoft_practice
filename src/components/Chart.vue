@@ -1,7 +1,7 @@
 <template>
     <div>
         <div ref="chart" class="chart">
-                <apexchart height="350" type="line" :options="chartOptions" :series="series"/>
+            <apexchart height="350" type="line" :options="chartOptions" :series="series"/>
         </div>
         <v-data-table
                 v-model="selectedRows"
@@ -32,73 +32,79 @@
 </template>
 
 <script>
-    import data from '../stabs/items';
+  import data from '../stabs/items';
 
-    const X_AXIS = 'date';
+  const X_AXIS = 'date';
 
-    export default {
-        name: "Chart",
-        props: {
-            type: {
-                type: String,
-                default: 'temperature',
-                validator: function (value) {
-                    return ['temperature', 'humidity', 'speed'].indexOf(value) !== -1
-                }
-            }
-        },
-        beforeMount() {
-            const hashDate = this.$router.history.current.hash.slice(1);
-            const page = this.globalData.findIndex(e => e.date === hashDate);
-
-            if (~page) {
-                this.page = Math.floor(page / 10 + 1);
-            }
-            this.selectedRows = this.globalData.filter(e => e.date === hashDate);
-        },
-        data() {
-            return {
-                chartOptions: {
-                    chart: {
-                        toolbar: false
-                    },
-                    xaxis: {
-                        type: "datetime",
-                        categories: data.map(e => e[X_AXIS])
-                    }
-                },
-                series: [
-                    {
-                        name: this.type,
-                        data: data.map(e => e[this.type])
-                    }
-                ],
-                page: 1,
-                selectedRows: [],
-                headers: [
-                    {
-                        text: 'Дата',
-                        align: 'left',
-                        value: 'date'
-                    },
-                    {text: 'Температура', value: 'temperature'},
-                    {text: 'Влажность', value: 'humidity'},
-                    {text: 'Скорость ветра', value: 'speed'},
-                ],
-                globalData: data,
-            };
-        },
-        methods: {
-            toggle(isSelected, select, date) {
-                if (!isSelected) {
-                    history.replaceState("", document.title, '#' + date);
-                } else {
-                    history.replaceState("", document.title, ' ');
-                }
-                select(!isSelected)
-            }
+  export default {
+    name: "Chart",
+    props: {
+      type: {
+        type: String,
+        default: 'temperature',
+        validator: function (value) {
+          return ['temperature', 'humidity', 'speed'].indexOf(value) !== -1
         }
+      }
+    },
+    beforeMount() {
+      const hashDate = this.$route.hash.slice(1);
+      const page = this.globalData.findIndex(e => e.date === hashDate);
+
+      if (~page) {
+        this.page = Math.floor(page / 10 + 1);
+      }
+      this.selectedRows = this.globalData.filter(e => e.date === hashDate);
+    },
+    data() {
+      return {
+        chartOptions: {
+          chart: {
+            toolbar: false
+          },
+          xaxis: {
+            type: "datetime",
+            categories: data.map(e => e[X_AXIS])
+          }
+        },
+        series: [
+          {
+            name: this.type,
+            data: data.map(e => e[this.type])
+          }
+        ],
+        page: 1,
+        selectedRows: [],
+        headers: [
+          {
+            text: 'Дата',
+            align: 'left',
+            value: 'date'
+          },
+          {text: 'Температура', value: 'temperature'},
+          {text: 'Влажность', value: 'humidity'},
+          {text: 'Скорость ветра', value: 'speed'},
+        ],
+        globalData: data,
+      };
+    },
+    beforeRouteEnter(to, from, next) {
+      if(!to.hash && location.hash) {
+        return next(to.fullPath + location.hash);
+      }
+      next();
+    },
+    methods: {
+      toggle(isSelected, select, date) {
+        if (!isSelected) {
+          history.replaceState("", document.title, '#' + date);
+        } else {
+          history.replaceState("", document.title, ' ');
+        }
+        select(!isSelected)
+      }
     }
+  }
 </script>
 
 <style scoped>

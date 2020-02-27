@@ -1,19 +1,22 @@
 <template>
-  <v-app>
-    <v-content>
-      <MainComponent/>
-    </v-content>
-  </v-app>
+    <v-app>
+        <v-content>
+            <MainComponent/>
+        </v-content>
+    </v-app>
 </template>
 
 <script>
-import MainComponent from './components/MainComponent';
+    import MainComponent from './components/MainComponent';
+    import 'swiper/dist/css/swiper.css'
 
-export default {
-  name: 'App',
-
-  components: {
-    MainComponent,
-  },
-};
+    export default {
+        name: 'App',
+        components: {
+            MainComponent,
+        },
+    };
 </script>
+<style>
+
+</style>

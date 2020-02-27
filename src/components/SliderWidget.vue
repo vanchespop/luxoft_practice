@@ -8,7 +8,7 @@
         </swiper>
         <swiper :options="swiperOptionThumbs" class="gallery-thumbs" ref="swiperThumbs">
             <swiper-slide v-for="image in images" :key="image.index" class="slide-img">
-                <img :src="image.link" alt="">
+                <img :src="image.link" >
             </swiper-slide>
             <div class="swiper-button-next" slot="button-next"/>
             <div class="swiper-button-prev" slot="button-prev"/>

@@ -30,7 +30,14 @@
                     max-width="100vmin"
             >
                 <v-card>
-                    <v-img contain :src="mainImageUrl"/>
+                    <swiper :options="swiperOptions" ref="iconSwiper" >
+                        <swiper-slide v-for="image in imagesArray" :key="image.index" class="slide-img" >
+                        <v-img contain :src="image.src" />
+                        </swiper-slide>
+                        <div class="swiper-button-next" slot="button-next"/>
+                        <div class="swiper-button-prev" slot="button-prev"/>
+                    </swiper>
+
                 </v-card>
             </v-dialog>
         </div>
@@ -65,11 +72,14 @@
 
 <script>
     import data from '../stabs/items';
-
+    import {swiper} from "vue-awesome-swiper";
     const X_AXIS = 'date';
 
     export default {
         name: "Chart",
+        components: {
+            swiper
+        },
         props: {
             type: {
                 type: String,
@@ -89,7 +99,6 @@
                 this.page = Math.floor(page / 10 + 1);
             }
             this.selectedRows = this.globalData.filter(e => e.date === hashDate);
-
             this.loadImages();
         },
 
@@ -105,6 +114,16 @@
                 imagesArray: [],
                 selectedRows: [],
                 globalData: data,
+                currentState: '',
+                swiperOptions: {
+                effect: 'fade',
+                    initialSlide: '',
+                    navigation: {
+                    nextEl: '.swiper-button-next',
+                        prevEl: '.swiper-button-prev',
+                }
+
+                },
                 series: [
                     {
                         name: this.type,
@@ -125,8 +144,13 @@
                     markers: {
                         size: 10,
                         onClick: (e) => {
+
                             this.dialog = true;
-                            e.stopPropagation()
+
+                            //console.log(this.currentState); this works
+                            //this.$refs.iconSwiper.swiper.initialSlide = this.currentState; this does not
+                            e.stopPropagation();
+
                         }
                     },
                     tooltip: {
@@ -150,7 +174,7 @@
 
 
         beforeRouteEnter(to, from, next) {
-            if(!to.hash && location.hash) {
+            if (!to.hash && location.hash) {
                 return next(to.fullPath + location.hash);
             }
             next();
@@ -171,29 +195,27 @@
                 const ICON_WIDTH = 10, ICON_BOTTOM_OFFSET = 50;
                 const {x: canvasOffsetX, y: canvasOffsetY} = document.getElementById('apex').getBoundingClientRect();
                 const {x: dotOffsetX, y: dotOffsetY} = event.target.getBoundingClientRect();
-
-                this.chartIconPosition.x = - canvasOffsetX + dotOffsetX - ICON_WIDTH / 2;
-                this.chartIconPosition.y = - canvasOffsetY + dotOffsetY - ICON_BOTTOM_OFFSET;
-
+                this.chartIconPosition.x = -canvasOffsetX + dotOffsetX - ICON_WIDTH / 2;
+                this.chartIconPosition.y = -canvasOffsetY + dotOffsetY - ICON_BOTTOM_OFFSET;
                 this.imageUrl = `https://picsum.photos/id/${currentState.dataPointIndex}/30/30`;
-                this.mainImageUrl = `https://picsum.photos/id/${currentState.dataPointIndex}/980/600`;
+                // this.currentState = currentState.dataPointIndex;
+
                 this.tooltip = true;
-            },
+                },
 
             chartPointMouseLeave() {
                 this.tooltip = false
             },
 
             loadImages() {
-                for(let i = 0; i < 15; i++) {
+                for (let i = 0; i < 15; i++) {
                     const img = new Image();
-
                     // тут должны быть нормальные пути
-                    img.src = `https://picsum.photos/id/${i}/30/30`;
+                    img.src = `https://picsum.photos/id/${i}/980/600`;
                     this.imagesArray[i] = img;
                 }
+            },
             }
-        }
     }
 </script>
 
